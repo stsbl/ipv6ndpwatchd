@@ -1,0 +1,6 @@
+debian/ipv6ndpwatchd/*
+debian/ipv6ndpwatchd.substvars
+debian/ipv6ndpwatchd.debhelper.log
+debian/files
+debian/debhelper-build-stamp
+debian/*.debhelper

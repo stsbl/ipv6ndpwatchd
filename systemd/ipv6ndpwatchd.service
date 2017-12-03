@@ -1,0 +1,17 @@
+# ipv6ndpwatchd
+[Unit]
+Description=NDP Table Watcher Daemon
+After=postgresql.service remote-fs.target local-fs.target
+
+[Service]
+ExecStart=/usr/sbin/ipv6ndpwatchd -d
+ExecStartPre=/bin/systemd-tmpfiles ipv6ndpwatchd.conf --remove --create
+ExecStopPost=/bin/systemd-tmpfiles ipv6ndpwatchd.conf --clean
+PIDFile=/run/ipv6ndpwatchd/pid
+RemainAfterExit=yes
+Restart=on-failure
+SyslogIdentifier=ipv6ndpwatchd
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

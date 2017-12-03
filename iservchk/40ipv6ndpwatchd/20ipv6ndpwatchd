@@ -1,0 +1,4 @@
+MkDir 0755 root:root /run/ipv6ndpwatchd
+
+Start ipv6ndpwatchd
+

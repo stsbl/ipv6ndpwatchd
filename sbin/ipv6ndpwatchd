@@ -1,0 +1,118 @@
+#!/usr/bin/perl -T -CSDAL
+
+use warnings;
+use strict;
+use Getopt::Long;
+use IServ::DB;
+use Net::IP;
+use POSIX qw(setsid);
+use Sys::Syslog;
+
+undef %ENV;
+
+$IServ::DB::user = "ipv6ndpwatchd";
+
+my $prog = "ipv6ndpwatchd";
+my $dir_run = "/run/$prog";
+my $fn_pid = "$dir_run/pid";
+
+my ($daemon, $help);
+GetOptions("daemon" => \$daemon, "help" => \$help) or $help = 1;
+
+print <<USAGE and exit if @ARGV != 0 || $help;
+Usage: $prog [options]
+Options
+ -d, --daemon           run as daemon
+ -h, --help             show this help
+USAGE
+
+die "must run as root" if $<;
+
+sub logger($)
+{
+  my ($msg) = @_;
+  print "$msg\n";
+  syslog "info", $msg or warn $!;
+}
+
+sub ip_in_net($$)
+{
+ my ($net, $ip) = @_;
+ $net = new Net::IP($net);
+ $ip = new Net::IP($ip);
+
+ $net->overlaps($ip, $net) eq $Net::IP::IP_B_IN_A_OVERLAP;
+}
+
+sub get_current_ndp
+{
+  # 2001:470:6d:31b:2d79:cf95:8d97:f64d dev eth0 lladdr 90:1b:0e:ac:c6:91 REACHABLE
+  my %out;
+
+  for (split "\n", qx(/bin/ip -6 neigh))
+  {
+    next if not /(REACHABLE|STALE)$/;
+    my ($ip, undef, undef, undef, $mac) = split " ", $_;
+    # do not log link-local
+    ip_in_net "fe80::/10", "$ip/128" and next;
+    # do not log unique-local
+    ip_in_net "fc00::/7", "$ip/128" and next;
+    $out{$ip} = $mac;
+  }
+
+  return %out;
+}
+
+if ($daemon)
+{
+  chdir "/" or die "chdir: $!\n";
+  defined(my $pid = fork) or die "fork: $!\n";
+  if ($pid)
+  {
+    open my $fp, ">", $fn_pid or die "write pid: $!\n";
+    print $fp "$pid\n";
+    close $fp;
+    exit;
+  }
+  setsid or die $!;
+
+  open STDIN, "/dev/null" or die "redirect stdin: $!\n";
+  open STDOUT, ">/dev/null" or die "redirect stdout: $!\n";
+  open STDERR, ">/dev/null" or die "redirect stderr: $!\n";
+}
+
+$SIG{TERM} = sub {
+  logger "got SIGTERM";
+  exit;
+};
+$SIG{INT} = sub {
+  logger "got SIGINT";
+  exit;
+};
+
+while (1)
+{
+  my %ndp_state = get_current_ndp; 
+
+  for my $ip (keys %ndp_state)
+  {
+    my $mac = $ndp_state{$ip};
+
+    if (IServ::DB::Do "SELECT 1 FROM ipv6_ndp_log WHERE IP = ? AND Mac = ?", $ip, $mac)
+    {
+      logger sprintf "Updating seen timestamp for pair IP = %s, Mac = %s", $ip, $mac;
+      # update existing entry
+      IServ::DB::Do "UPDATE ipv6_ndp_log SET Last_Seen = now() WHERE IP = ? AND Mac = ?", $ip, $mac;
+    }
+    else
+    {
+      logger sprintf "Adding new pair IP = %s, Mac = %s", $ip, $mac;
+      # update existing entry
+      IServ::DB::Do "INSERT INTO ipv6_ndp_log(IP, Mac) VALUES (?, ?)", $ip, $mac;
+    }
+  }
+
+  IServ::DB::Disconnect;
+  logger "Sleeping for 30 seconds.";
+  sleep 30;
+}
