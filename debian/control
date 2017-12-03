@@ -16,4 +16,4 @@ Depends:
 Description: NDP Table Watcher Daemon 
  Simple daemon which reads `ip -6 neigh` output and logs IPv6/MAC combinations
  into the IServ Database every 30 seconds.
-Tag: suite::iserv
+Tag: suite::iserv, implemented-in::perl
