@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# expire ndp log
+psql iserv postgres -qc "
+  DELETE FROM ipv6_ndp_log WHERE last_seen < now() - '6 month'::interval
+"
