@@ -1,3 +1,9 @@
+ipv6ndpwatchd (19.05.12-3) unstable; urgency=medium
+
+  * Added database index for cleanup job
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 12 May 2019 20:09:19 +0200
+
 ipv6ndpwatchd (19.05.12-2) unstable; urgency=medium
 
   * Bumped compat
