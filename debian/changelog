@@ -1,3 +1,9 @@
+ipv6ndpwatchd (19.05.12-2) unstable; urgency=medium
+
+  * Bumped compat
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 12 May 2019 20:01:12 +0200
+
 ipv6ndpwatchd (19.05.12-1) unstable; urgency=medium
 
   * Implemented log expiry
