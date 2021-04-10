@@ -2,19 +2,18 @@ Source: ipv6ndpwatchd
 Section: misc
 Priority: optional
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
-Build-Depends: debhelper (>= 10)
-Build-Depends-Indep: iserv-buildtools
-Standards-Version: 4.1.3
+Build-Depends: debhelper-compat (= 13), dh-sequence-iserv, dh-sequence-stsbl
+Standards-Version: 4.5.0
 
 Package: ipv6ndpwatchd
 Architecture: all
-Depends: ${misc:Depends},
-  ${perl:Depends},
-  iproute2,
-  iserv-server-postgresql,
-  iserv-update,
-Xb-Private-IServ-Revision: ${iserv:Revision}
-Description: NDP Table Watcher Daemon 
+Depends: iproute2,
+         iserv-server-postgresql,
+         iserv-update,
+         ${misc:Depends},
+         ${perl:Depends}
+Xb-Private-Iserv-Revision: ${iserv:Revision}
+Description: NDP Table Watcher Daemon
  Simple daemon which reads `ip -6 neigh` output and logs IPv6/MAC combinations
  into the IServ Database every 30 seconds.
 Tag: suite::iserv, implemented-in::perl
