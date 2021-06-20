@@ -1,3 +1,14 @@
+ipv6ndpwatchd (21.06.20.1) stable; urgency=medium
+
+  * Updated license copyright
+  * Fixed Build-Depends
+  * Moved to iservinstall
+  * Updated copyright
+  * Turned source format to native
+  * Added index to avoid sequence scans on updates
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 20 Jun 2021 20:53:22 +0200
+
 ipv6ndpwatchd (20.08.02-1) testing; urgency=medium
 
   * Bumped copyright
