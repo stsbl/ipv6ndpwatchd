@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
 Build-Depends: debhelper-compat (= 13), dh-sequence-iserv, dh-sequence-stsbl
 Standards-Version: 4.5.0
+Homepage: https://it.stsbl.de/
 
 Package: ipv6ndpwatchd
 Architecture: all
