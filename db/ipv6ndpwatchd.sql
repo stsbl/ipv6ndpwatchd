@@ -13,3 +13,4 @@ GRANT SELECT, USAGE ON ipv6_ndp_log_id_seq TO ipv6ndpwatchd;
 GRANT SELECT, INSERT, UPDATE ON ipv6_ndp_log TO ipv6ndpwatchd;
 
 CREATE INDEX ipv6_ndp_log_last_seen ON ipv6_ndp_log(Last_Seen);
+CREATE INDEX ipv6_ndp_log_ip_mac_key ON ipv6_ndp_log(ip, mac);
