@@ -1,3 +1,9 @@
+ipv6ndpwatchd (21.08.17.1) stable; urgency=medium
+
+  * Switched to git source format
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 17 Aug 2021 22:43:20 +0200
+
 ipv6ndpwatchd (21.06.20.2) stable; urgency=medium
 
   * Added homepage
